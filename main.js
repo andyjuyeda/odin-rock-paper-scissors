@@ -5,8 +5,15 @@ function getComputerChoice() {
 }
 
 function playRound(playerSelection, computerSelection) {
-  console.log("You chose " + playerSelection);
-  console.log("Computer chose " + computerSelection);
+  // console.log("You chose " + playerSelection);
+  // console.log("Computer chose " + computerSelection);
+  const container = document.querySelector(".container");
+  const playerChoiceDiv = document.createElement("div");
+  playerChoiceDiv.textContent = "You chose " + playerSelection;
+  container.appendChild(playerChoiceDiv);
+  const computerChoiceDiv = document.createElement("div");
+  computerChoiceDiv.textContent = "Computer chose " + computerSelection;
+  container.appendChild(computerChoiceDiv);
   if (playerSelection == "rock") {
     if (computerSelection == "rock") {
       return "Draw!";
@@ -35,26 +42,43 @@ function playRound(playerSelection, computerSelection) {
 }
 
 
-function game(n) {
-  let playerScore = 0;
-  let computerScore = 0;
-  for (let i = 0; i < n; i++) {
-    const playerSelection = prompt("Rock, Paper, or Scissors?").toLowerCase();
-    const computerSelection = getComputerChoice();
-    let result = playRound(playerSelection, computerSelection);
+const buttons = document.querySelectorAll(".btn");
+let playerScore = 0;
+let computerScore = 0;
+
+// Create the score display element outside of the event listener
+const resultContainer = document.querySelector(".result");
+const container = document.querySelector('.container');
+const scoreDisplay = document.createElement("h4");
+resultContainer.appendChild(scoreDisplay);
+
+buttons.forEach((button) =>
+  button.addEventListener("click", () => {
+    // If either score is 5, don't play a new round
+    if (playerScore === 5 || computerScore === 5) {
+      return;
+    }
+
+    const result = playRound(button.value, getComputerChoice());
+    const resultDiv = document.createElement("div");
+    resultDiv.textContent = result;
+    container.appendChild(resultDiv);
+
     if (result == "You Lose!") {
       computerScore++;
     } else if (result == "You Win!") {
       playerScore++;
     }
-  }
-  if (playerScore > computerScore) {
-    return "You win " + playerScore + " to " + computerScore + "!";
-  } else if (playerScore < computerScore) {
-    return "You lose " + playerScore + " to " + computerScore + "!";
-  } else {
-    return "It's a tie! " + playerScore + " to " + computerScore + "!";
-  }
-}
 
-console.log(game(4));
+    // Update the text content of the existing score display element
+    scoreDisplay.textContent =
+      "Your Score: " + playerScore + " - " + "Computer Score: " + computerScore;
+
+    // If either score is 5, display a message and stop the game
+    if (playerScore === 5) {
+      alert("You win the game!");
+    } else if (computerScore === 5) {
+      alert("Computer wins the game!");
+    }
+  })
+);
